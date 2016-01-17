@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Pig</string>
+
+    <string name="your_score">Your Score: 0 Turn Score: 0</string>
+    <string name="computer_score">Computer Score: 0 Turn Score: 0</string>
+    <string name="turn">Your turn</string>
+    <string name="roll">ROLL</string>
+    <string name="hold">HOLD</string>
+    <string name="reset">RESET</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
