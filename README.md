@@ -2,6 +2,9 @@
 Computer Science with Android 2016
 
 ## Anagrams
+
+![](http://i.imgur.com/tUiHUuUl.jpg)
+
 The game will provide a word from the dictionary to the user. 
 The user must try to create as many words as possible that contain all the letters of the given word plus one additional letter. Note that adding the extra letter at the beginning or the end without reordering the other letters is not valid.
 
@@ -10,6 +13,9 @@ For example, if the game picks the word 'ore' as a starter, the user might guess
 The user can give up and see the words that they did not guess by clicking on the hint button.
 
 ## Pig
+
+![](http://i.imgur.com/fg1GWhCl.png)
+
 Pig is a turn-based dice game where a player is pit against a computer to try and accumulate the highest score possible without rolling a one.
 
 During each turn, the player can repeatedly roll a single die until either a 1 is rolled or until he/she decides to "hold":
