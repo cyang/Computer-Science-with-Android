@@ -3,6 +3,8 @@
 
     <string name="challenge">Challenge</string>
     <string name="restart">Restart</string>
+    <string name="userScore">User Score: 0</string>
+    <string name="computerScore">Computer Score: 0</string>
 
     <string name="action_settings">Settings</string>
 </resources>

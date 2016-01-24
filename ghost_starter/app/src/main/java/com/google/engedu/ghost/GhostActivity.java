@@ -16,14 +16,25 @@ import java.util.Random;
 
 
 public class GhostActivity extends ActionBarActivity {
-    private static final String COMPUTER_TURN = "Computer's turn";
     private static final String USER_TURN = "Your turn";
-    private static final String COMPUTER_VICTORY = "Computer victory";
     private static final String USER_VICTORY = "User victory";
+    private static final String USER_SCORE_LABEL = "User Score: %d";
+
+    private static final String COMPUTER_TURN = "Computer's turn";
+    private static final String COMPUTER_VICTORY = "Computer victory";
+    private static final String COMPUTER_SCORE_LABEL = "Computer Score: %d";
+
+    private boolean gameOver = false;
+
+    private int userScore = 0;
+    private int computerScore = 0;
 
     static final String STATE_STATUS = "gameStatus";
     static final String STATE_FRAGMENT = "wordFragment";
     static final String STATE_TURN = "turn";
+    static final String STATE_USER_SCORE = "userScore";
+    static final String STATE_COMPUTER_SCORE = "computerScore";
+    static final String STATE_GAME_OVER = "gameOver";
 
 
     private GhostDictionary dictionary;
@@ -32,6 +43,8 @@ public class GhostActivity extends ActionBarActivity {
 
     private TextView ghostTextView;
     private TextView gameStatusTextView;
+    private TextView userScoreTextView;
+    private TextView computerScoreTextView;
 
     private Button challengeButton;
 
@@ -41,11 +54,17 @@ public class GhostActivity extends ActionBarActivity {
     private Runnable timerRunner = new Runnable() {
         @Override
         public void run() {
+            if(gameOver) {
+                return;
+            }
+
             if(wordFragment.length() >= 4) {
                 if (dictionary.isWord(wordFragment)) {
 
                     // User player has completed a word
                     gameStatusTextView.setText(COMPUTER_VICTORY + "; you completed a word");
+                    updateScore("computer");
+
                     challengeButton.setEnabled(false);
 
                     return;
@@ -58,6 +77,8 @@ public class GhostActivity extends ActionBarActivity {
             if(possibleWord == null){
                 // Word doesn't exist
                 gameStatusTextView.setText(COMPUTER_VICTORY + "; not a valid prefix");
+                updateScore("computer");
+
                 challengeButton.setEnabled(false);
 
                 return;
@@ -80,6 +101,8 @@ public class GhostActivity extends ActionBarActivity {
 
         ghostTextView = (TextView) findViewById(R.id.ghostText);
         gameStatusTextView = (TextView) findViewById(R.id.gameStatus);
+        userScoreTextView = (TextView) findViewById(R.id.userScore);
+        computerScoreTextView = (TextView) findViewById(R.id.computerScore);
 
         challengeButton = (Button) findViewById(R.id.challengeButton);
 
@@ -93,11 +116,25 @@ public class GhostActivity extends ActionBarActivity {
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             gameStatusTextView.setText(savedInstanceState.getString(STATE_STATUS));
+
             wordFragment = savedInstanceState.getString(STATE_FRAGMENT);
             ghostTextView.setText(wordFragment);
+
+            userScore = savedInstanceState.getInt(STATE_USER_SCORE);
+            computerScore = savedInstanceState.getInt(STATE_COMPUTER_SCORE);
+            userScoreTextView.setText(String.format(USER_SCORE_LABEL, userScore));
+            computerScoreTextView.setText(String.format(COMPUTER_SCORE_LABEL, computerScore));
+
+            gameOver = savedInstanceState.getBoolean(STATE_GAME_OVER);
             userTurn = savedInstanceState.getBoolean(STATE_TURN);
 
-            checkTurn();
+            if(gameOver){
+                challengeButton.setEnabled(false);
+            } else {
+                challengeButton.setEnabled(true);
+                checkTurn();
+            }
+
         } else {
             onStart(null);
         }
@@ -141,6 +178,8 @@ public class GhostActivity extends ActionBarActivity {
         ghostTextView.setText("");
         wordFragment = "";
 
+        gameOver = false;
+
         checkTurn();
 
         challengeButton.setEnabled(true);
@@ -168,6 +207,7 @@ public class GhostActivity extends ActionBarActivity {
             gameStatusTextView.setText(COMPUTER_TURN);
             userTurn = false;
             computerTurn();
+
             return true;
         } else {
             return super.onKeyUp(keyCode, event);
@@ -179,16 +219,18 @@ public class GhostActivity extends ActionBarActivity {
             if(dictionary.isWord(wordFragment)){
                 // Computer has finished a word
                 gameStatusTextView.setText(USER_VICTORY + "; computer completed a word");
+                updateScore("user");
             } else {
                 String possibleWord = dictionary.getAnyWordStartingWith(wordFragment);
 
                 if(possibleWord != null) {
                     // Computer creates a fragment that is a prefix of a word from the dictionary
                     gameStatusTextView.setText(String.format(COMPUTER_VICTORY + "; Possible word: %s", possibleWord));
+                    updateScore("computer");
                 } else {
                     // Computer creates a bad fragment
                     gameStatusTextView.setText(USER_VICTORY);
-
+                    updateScore("user");
                 }
             }
 
@@ -202,11 +244,25 @@ public class GhostActivity extends ActionBarActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
-        savedInstanceState.putString(STATE_STATUS, String.valueOf(gameStatusTextView.getText()));
+        savedInstanceState.putString(STATE_STATUS, (String) gameStatusTextView.getText());
         savedInstanceState.putString(STATE_FRAGMENT, wordFragment);
+        savedInstanceState.putInt(STATE_USER_SCORE, userScore);
+        savedInstanceState.putInt(STATE_COMPUTER_SCORE, computerScore);
         savedInstanceState.putBoolean(STATE_TURN, userTurn);
+        savedInstanceState.putBoolean(STATE_GAME_OVER, gameOver);
 
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void updateScore(String victor){
+        if(victor.equals("user")){
+            userScore++;
+            userScoreTextView.setText(String.format(USER_SCORE_LABEL, userScore));
+        } else {
+            computerScore++;
+            computerScoreTextView.setText(String.format(COMPUTER_SCORE_LABEL, computerScore));
+        }
+        gameOver = true;
     }
 }
