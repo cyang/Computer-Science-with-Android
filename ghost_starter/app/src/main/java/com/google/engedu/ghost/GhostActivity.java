@@ -21,6 +21,10 @@ public class GhostActivity extends ActionBarActivity {
     private static final String COMPUTER_VICTORY = "Computer victory";
     private static final String USER_VICTORY = "User victory";
 
+    static final String STATE_STATUS = "gameStatus";
+    static final String STATE_FRAGMENT = "wordFragment";
+    static final String STATE_TURN = "turn";
+
 
     private GhostDictionary dictionary;
     private boolean userTurn = false;
@@ -85,7 +89,18 @@ public class GhostActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        onStart(null);
+        // Check whether we're recreating a previously destroyed instance
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            gameStatusTextView.setText(savedInstanceState.getString(STATE_STATUS));
+            wordFragment = savedInstanceState.getString(STATE_FRAGMENT);
+            ghostTextView.setText(wordFragment);
+            userTurn = savedInstanceState.getBoolean(STATE_TURN);
+
+            checkTurn();
+        } else {
+            onStart(null);
+        }
     }
 
     @Override
@@ -126,16 +141,20 @@ public class GhostActivity extends ActionBarActivity {
         ghostTextView.setText("");
         wordFragment = "";
 
+        checkTurn();
+
+        challengeButton.setEnabled(true);
+
+        return true;
+    }
+
+    public void checkTurn(){
         if (userTurn) {
             gameStatusTextView.setText(USER_TURN);
         } else {
             gameStatusTextView.setText(COMPUTER_TURN);
             computerTurn();
         }
-
-        challengeButton.setEnabled(true);
-
-        return true;
     }
 
     @Override
@@ -159,7 +178,7 @@ public class GhostActivity extends ActionBarActivity {
         if(wordFragment.length() >= 4){
             if(dictionary.isWord(wordFragment)){
                 // Computer has finished a word
-                gameStatusTextView.setText(USER_VICTORY);
+                gameStatusTextView.setText(USER_VICTORY + "; computer completed a word");
             } else {
                 String possibleWord = dictionary.getAnyWordStartingWith(wordFragment);
 
@@ -180,4 +199,14 @@ public class GhostActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString(STATE_STATUS, String.valueOf(gameStatusTextView.getText()));
+        savedInstanceState.putString(STATE_FRAGMENT, wordFragment);
+        savedInstanceState.putBoolean(STATE_TURN, userTurn);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
 }
