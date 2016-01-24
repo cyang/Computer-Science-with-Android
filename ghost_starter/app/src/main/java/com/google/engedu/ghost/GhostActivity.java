@@ -1,6 +1,7 @@
 package com.google.engedu.ghost;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -31,6 +32,41 @@ public class GhostActivity extends ActionBarActivity {
     private Button challengeButton;
 
     private String wordFragment = "";
+
+    private Handler timerHandler = new Handler();
+    private Runnable timerRunner = new Runnable() {
+        @Override
+        public void run() {
+            if(wordFragment.length() >= 4) {
+                if (dictionary.isWord(wordFragment)) {
+
+                    // User player has completed a word
+                    gameStatusTextView.setText(COMPUTER_VICTORY + "; you completed a word");
+                    challengeButton.setEnabled(false);
+
+                    return;
+                }
+            }
+
+            // Get a new possible longer word
+            String possibleWord = dictionary.getAnyWordStartingWith(wordFragment);
+
+            if(possibleWord == null){
+                // Word doesn't exist
+                gameStatusTextView.setText(COMPUTER_VICTORY + "; not a valid prefix");
+                challengeButton.setEnabled(false);
+
+                return;
+            } else {
+                // Word does exist
+                wordFragment = possibleWord.substring(0, wordFragment.length()+1);
+                ghostTextView.setText(wordFragment);
+            }
+
+            userTurn = true;
+            gameStatusTextView.setText(USER_TURN);
+        }
+    };
 
 
     @Override
@@ -76,37 +112,7 @@ public class GhostActivity extends ActionBarActivity {
 
     private void computerTurn() {
         // Do computer turn stuff then make it the user's turn again
-        if(wordFragment.length() >= 4) {
-            if (dictionary.isWord(wordFragment)) {
-
-                // User player has completed a word
-                gameStatusTextView.setText(COMPUTER_VICTORY + "; you completed a word");
-
-                challengeButton.setEnabled(false);
-
-                return;
-            }
-        }
-
-        // Get a new possible longer word
-        String possibleWord = dictionary.getAnyWordStartingWith(wordFragment);
-
-        if(possibleWord == null){
-            // Word doesn't exist
-            gameStatusTextView.setText(COMPUTER_VICTORY + "; not a valid prefix");
-
-            challengeButton.setEnabled(false);
-
-            return;
-        } else {
-            // Word does exist
-            wordFragment = possibleWord.substring(0, wordFragment.length()+1);
-            ghostTextView.setText(wordFragment);
-        }
-
-
-        userTurn = true;
-        gameStatusTextView.setText(USER_TURN);
+        timerHandler.postDelayed(timerRunner, 500);
     }
 
     /**
