@@ -17,11 +17,9 @@ public class TrieNode {
     }
 
     public void add(String s) {
-        int i = 0;
         HashMap<String, TrieNode> cursor = children;
 
-        while(i < s.length()){
-
+        for(int i = 0; i < s.length(); i++){
             if (cursor.containsKey(String.valueOf(s.charAt(i)))) {
                 // The character already exists, then go to the next children
                 cursor = cursor.get(String.valueOf(s.charAt(i))).children;
@@ -33,24 +31,18 @@ public class TrieNode {
                 cursor = insertNode.children;
 
                 if(i+1 == s.length()){
+                    // Reached the end of the word
                     insertNode.isWord = true;
                 }
             }
-
-            i++;
         }
-
-
     }
 
     public boolean isWord(String s) {
-        Log.i("what", s);
-
-        int i = 0;
         HashMap<String, TrieNode> cursor = children;
         TrieNode currentNode = new TrieNode();
 
-        while(i < s.length()){
+        for(int i = 0; i < s.length(); i++){
             if (cursor.containsKey(String.valueOf(s.charAt(i)))){
                 // The character exists, then go to the next children
                 currentNode = cursor.get(String.valueOf(s.charAt(i)));
@@ -59,30 +51,31 @@ public class TrieNode {
                 // The character doesn't exist
                 return false;
             }
-
-            i++;
         }
 
+        // Check for the end of the word
         return currentNode.isWord;
 
     }
 
     public String getAnyWordStartingWith(String s) {
         String output = "";
-        int i = 0;
         HashMap<String, TrieNode> cursor = children;
 
         if(!s.isEmpty()){
-            while(i < s.length()){
+            // non-empty prefix
+            for(int i = 0; i < s.length(); i++){
                 // Travel through the prefix
-                if(cursor.containsKey(String.valueOf(s.charAt(i)))) {
-                    cursor = cursor.get(String.valueOf(s.charAt(i))).children;
+                String currentChar = String.valueOf(s.charAt(i));
+
+                if(cursor.containsKey(currentChar)) {
+                    cursor = cursor.get(currentChar).children;
                 } else {
                     return null;
                 }
-                i++;
             }
 
+            // Finished traversing through prefix
             output = s;
 
             while(cursor != null){
@@ -90,6 +83,7 @@ public class TrieNode {
                 Iterator keyIterator = cursor.keySet().iterator();
 
                 if(keyIterator.hasNext()) {
+                    // Iterate
                     String currentChar = keyIterator.next().toString();
                     cursor = cursor.get(String.valueOf(currentChar)).children;
 
@@ -99,7 +93,7 @@ public class TrieNode {
                 }
             }
         } else {
-            // Grab a random word from the dictionary
+            // Empty prefix, so grab a random word from the dictionary
             Iterator keyIterator = cursor.keySet().iterator();
 
             while(cursor != null) {
@@ -110,6 +104,7 @@ public class TrieNode {
                 String currentChar = "";
 
                 while (j < numIteration && keyIterator.hasNext()) {
+                    // Find the current random character
                     currentChar = keyIterator.next().toString();
                     j++;
                 }
@@ -117,6 +112,7 @@ public class TrieNode {
                 output = output.concat(currentChar);
 
                 if(cursor.containsKey(currentChar)) {
+                    // Move to the next character
                     cursor = cursor.get(currentChar).children;
                 } else {
                     break;
