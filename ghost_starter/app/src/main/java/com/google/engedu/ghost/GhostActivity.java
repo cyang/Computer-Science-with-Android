@@ -59,6 +59,7 @@ public class GhostActivity extends ActionBarActivity {
             }
 
             if(wordFragment.length() >= 4) {
+
                 if (dictionary.isWord(wordFragment)) {
 
                     // User player has completed a word
@@ -73,6 +74,7 @@ public class GhostActivity extends ActionBarActivity {
 
             // Get a new possible longer word
             String possibleWord = dictionary.getAnyWordStartingWith(wordFragment);
+
 
             if(possibleWord == null){
                 // Word doesn't exist
@@ -107,7 +109,8 @@ public class GhostActivity extends ActionBarActivity {
         challengeButton = (Button) findViewById(R.id.challengeButton);
 
         try {
-            dictionary = new SimpleDictionary(getAssets().open("words.txt"));
+//            dictionary = new SimpleDictionary(getAssets().open("words.txt"));
+            dictionary = new FastDictionary(getAssets().open("words.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }
