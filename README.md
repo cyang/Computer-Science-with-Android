@@ -35,3 +35,9 @@ So on player 1's turn, they can:
 * challenge player 2's word if they think that no word can be formed with the current fragment. Then, player 2 must provide a valid word starting with the current fragment or lose.
 * add a letter to move the fragment towards a valid word
 * attempt to bluff player 2 by adding a letter that doesn't move the fragment towards a valid word 
+
+## Puzzle8
+
+![](http://i.imgur.com/4DP2Xtdl.jpg)
+
+Puzzle8 is a tile sliding game generated from a user-taken image.
