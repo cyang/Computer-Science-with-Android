@@ -113,7 +113,35 @@ public class PuzzleBoard {
     }
 
     public ArrayList<PuzzleBoard> neighbours() {
-        return null;
+        ArrayList<PuzzleBoard> neighbours = new ArrayList<>();
+
+        for (int i = 0; i < NUM_TILES * NUM_TILES; i++) {
+            PuzzleTile tile = tiles.get(i);
+            if (tile == null) {
+                //TODO
+                int x = i % NUM_TILES;
+                int y = i / NUM_TILES;
+
+                for (int[] delta : NEIGHBOUR_COORDS) {
+                    int neighborX = x + delta[0];
+                    int neighborY = y + delta[1];
+
+                    int j = XYtoIndex(neighborX, neighborY);
+                    if (j >= 0 && j < NUM_TILES*NUM_TILES) {
+                        PuzzleTile neighbor = tiles.get(j);
+
+                        if (neighbor != null) {
+                            PuzzleBoard copyBoard = new PuzzleBoard(this);
+                            swapTiles(i, j);
+
+                            neighbours.add(copyBoard);
+                        }
+                    }
+                }
+            }
+        }
+
+        return neighbours;
     }
 
     public int priority() {

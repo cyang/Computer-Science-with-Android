@@ -71,7 +71,6 @@ public class PuzzleActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            imageBitmap = (Bitmap) data.getExtras().get("data");
             imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath.substring(5));
             boardView.initialize(imageBitmap, boardView);
         }
